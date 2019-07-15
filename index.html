@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head> 
+	<link rel ="stylesheet" href ="css/index.css"/> 
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+	<script
+  src="/socket.io/socket.io.js"></script>
+	
+
+	<title> Chat System</title>
+</head>
+<body>
+	<div class = "container">
+		<div class ="row">
+			<div class ="col-md-4">
+			<div class = "contacts">
+				
+		<ul>
+		<li>
+			<div class = "img">
+			<img src="images/user2.png" id = "profile">
+			</div>
+			<div class = "lastmsg">
+				<h4 id = "user"> Name</h4>
+				<i id="last_message">last text message</i>
+			</div>
+		</li>
+		<li>
+			<div class = "img">
+				<img src="images/user2.png" id = "profile">
+			</div>
+			<div class = "lastmsg">
+				<h4 id = "user"> Name</h4>
+				<i id="last_message">last text message</i>
+			</div>
+		</li>
+</ul>
+	</div>
+</div>
+<div class ="col-md-8">
+	<div class ="messages" id ="chat">
+		
+			<div class = "sender">
+				
+			</div>
+			<div class ="receiver">
+				
+			</div>
+			
+		
+	</div>
+	<div class = "textarea">
+			<form id = "messageForm">
+        <input type="text" id ="txtarea" name="message" placeholder="Type Your Message here...">
+        <input type="submit" name="submit" id="sendbt" value="Send">
+   </form>
+</div>
+</div>
+
+	
+		</div>
+	</div>
+		<script >
+
+			$(function(){
+				var socket = io.connect();
+				var $messageForm = $('#messageForm');
+				var $txtarea = $('#txtarea');
+				var $chat = $('#chat');
+
+				$messageForm.submit(function(e){
+					e.preventDefault();
+					
+					socket.emit('send message',$txtarea.val());
+					$txtarea.val('');
+				});
+//receive message from server
+				socket.on('new message',function(data){
+					$chat.append('<div class = "sender"><strong>'+data.user+'</strong>:'+data.msg+'</div>');
+				});
+			});
+			socket.on('get users',function(data){
+		var html = '';
+		for(i=0;i<data.lenghth;i++){
+			html += '<h4 id = "user">'+data[i]+'</h4>'
+		}
+		$users.html(html);
+
+	});
+
+		</script>
+<!--<script >
+	//$('#txtarea').keyup(function(e){
+
+		var $messageForm = $('#messageForm');
+		$messageForm.submit(function(e){
+		var message = $(this).val();
+		if (e.which == 13) {
+			$.post('assets/ajax.php?action = SendMessage' +message, function(response){
+				loadChat();
+				$('message').val("");
+		
+
+			});
+		}
+	});
+	function loadChat()
+	{
+		$.post('assets/ajax.php?action=getChat',function(response){
+			$('#txtarea').html(response);
+		})
+	}
+</script> -->
+
+</body>
+</html>
